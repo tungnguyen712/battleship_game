@@ -18,6 +18,7 @@ def draw_board(board_size, hits, misses, title="Battleship Game Board", ax=None)
     ax.tick_params(which='both', length=0)
 
     ax.set_yticks([])
+    ax.set_xticks([])
     
     # Draw internal grid lines only
     for x in range(1, board_size):
@@ -132,30 +133,34 @@ def main():
             fig = plt.figure(figsize=(7, 7), facecolor='white')
             ax = fig.add_subplot(111)
     
+        # Bot's turn
         if game_mode == '2' and current_player == 1:  # Bot's turn
             print("\nBot's thinking...")
-            ai_move = minimax(player_boards[0], player_hits[1], player_misses[1])
+            ai_move = minimax(player_boards[opponent], player_hits[1], player_misses[1])
             if ai_move:
-                result(player_boards[0], ai_move[0], ai_move[1], player_hits[1], player_misses[1])
+                result(player_boards[opponent], ai_move[0], ai_move[1], player_hits[1], player_misses[1])
             
             # Update display
-            draw_board(board_size, player_hits[1], player_misses[1], 
-                      "Your Ships (Bot's Attacks)", ax)
+            draw_board(board_size, player_hits[1], player_misses[1], "Your Ships (Bot's Attacks)", ax)
             plt.pause(1)
             
         else:  # Human's turn
-            draw_board(board_size, player_hits[current_player], player_misses[current_player],
-                      f"Player {opponent+1}'s Board", ax)
+            draw_board(board_size, player_hits[current_player], player_misses[current_player], f"Player {opponent+1}'s Board", ax)
             
             row, col = get_player_input(f"Player {current_player+1}")
-            result(player_boards[opponent], row, col, 
-                  player_hits[current_player], player_misses[current_player])
+            result(player_boards[opponent], row, col, player_hits[current_player], player_misses[current_player])
 
         # Check win condition
         if terminal(player_boards[opponent]):
-            draw_board(board_size, player_hits[current_player], player_misses[current_player],
-                      f"Final Board - Player {current_player+1} Wins!", ax)
-            print(f"\nPlayer {current_player+1} wins!" if game_mode == '1' else "\nBot wins!")
+            draw_board(board_size, player_hits[current_player], player_misses[current_player], f"Final Board - Player {current_player+1} Wins!", ax)
+            if game_mode == '1':
+                print(f"\nPlayer {current_player+1} wins!")
+            else:
+                # In game_mode 2, current_player 0 is Human, 1 is Bot
+                if current_player == 0:
+                    print("\nPlayer 1 wins!")
+                else:
+                    print("\nBot wins!")
             plt.ioff()
             plt.show(block=True)
             break
