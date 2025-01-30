@@ -16,9 +16,9 @@ def utility(board):
                 for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
                     if 0 <= i+dx < len(board) and 0 <= j+dy < len(board):
                         if board[i+dx][j+dy] == "~":
-                            score += 3
+                            score += 10
             elif board[i][j] == "O":
-                score -= 2
+                score -= 1
     return score
 
 def actions(board, hits):
@@ -26,13 +26,13 @@ def actions(board, hits):
     for (r, c) in hits:
         for dr, dc in [(-1,0), (1,0), (0,-1), (0,1)]:
             nr, nc = r + dr, c + dc
-            if 0 <= nr < len(board) and 0 <= nc < len(board) and board[nr][nc] == '~':
+            if 0 <= nr < len(board) and 0 <= nc < len(board) and (board[nr][nc] in ['~', 'S']):
                 if (nr, nc) not in moves:
                     moves.append((nr, nc))
     if not moves:
         for i in range(len(board)):
             for j in range(len(board)):
-                if board[i][j] == '~' and (i, j) not in moves:
+                if board[i][j] in ['~', 'S'] and (i, j) not in moves:
                     moves.append((i, j))
     return moves
 
@@ -60,7 +60,7 @@ def minimax(board, hits, misses):
             best_action = action
     return best_action
 
-max_depth = 4
+max_depth = 3
 
 def min_value(board, hits, misses, depth=0, alpha=-float('inf'), beta=float('inf')):
     if terminal(board) or depth >= max_depth:
